@@ -51,7 +51,7 @@ class image_stream:
     cv2.imshow("depth", depth_norm)
     cv2.waitKey(3)
     try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(depth_norm, "passthrough"))
+      self.image_pub.publish(self.bridge.cv2_to_imgmsg(depth_norm, "32FC1"))
     except CvBridgeError as e:
       print(e)
 
