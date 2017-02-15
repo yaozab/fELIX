@@ -31,7 +31,7 @@ class image_stream:
     cv2.imshow("rgb", cv_rgbimage)
     cv2.waitKey(3)
     try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_rgbimage, "bgr8"))
     except CvBridgeError as e:
       print(e)
   def depth_callback(self,data):
@@ -44,10 +44,11 @@ class image_stream:
     #(rows,cols,channels) = cv_image.shape
     #if cols > 60 and rows > 60 :
     #    cv2.circle(cv_image, (50,50), 10, 255)
+    depth_norm = cv2.normalize(cv_depthimage, alpha=0, beta=1, normType = NORM_MINMAX)
     cv2.imshow("depth", cv_depthimage)
     cv2.waitKey(3)
     try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "mono8"))
+      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_depthimage, "mono8"))
     except CvBridgeError as e:
       print(e)
 
