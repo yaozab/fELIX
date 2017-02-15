@@ -49,7 +49,7 @@ class image_stream:
     cv2.imshow("depth", depth_norm)
     cv2.waitKey(3)
     try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_depthimage, "32FC1"))
+      self.image_pub.publish(self.bridge.cv2_to_imgmsg(depth_norm, "mono8"))
     except CvBridgeError as e:
       print(e)
 
