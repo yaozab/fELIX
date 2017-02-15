@@ -45,13 +45,13 @@ class image_stream:
     #(rows,cols,channels) = cv_image.shape
     #if cols > 60 and rows > 60 :
     #    cv2.circle(cv_image, (50,50), 10, 255)
-    print(cv_depthimage)
     depth_array = np.array(cv_depthimage, dtype=np.float32)
-    depth_norm = cv2.normalize(depth_array, alpha=0, beta=1)
+    print(depth_array)
+    depth_norm = cv2.normalize(depth_array, alpha=0, beta=255)
     cv2.imshow("depth", depth_norm)
     cv2.waitKey(3)
     try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(depth_norm, "mono8"))
+      self.image_pub.publish(self.bridge.cv2_to_imgmsg(depth_norm, "32FC1"))
     except CvBridgeError as e:
       print(e)
 
