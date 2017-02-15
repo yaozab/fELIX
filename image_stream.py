@@ -12,14 +12,16 @@ class image_stream:
     # initilize publishers
     self.image_pub = rospy.Publisher("image_stream", Image)
     # initlize subscriber
-    self.image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.callback)
-    self.image_sub = rospy.Subscriber("/camera/depth/image_raw", Image, self.callback)
+    self.rgb_image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.callback)
+    self.depth_image_sub = rospy.Subscriber("/camera/depth_registered/image_raw", Image, self.callback)
     self.bridge = CvBridge()
     print("initilized")
-    cv2.namedWindow("window")
+    cv2.namedWindow("rgb")
+    cv2.namedWindow("depth")
   def callback(self,data):
     try:
-      cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+      cv_rgbimage = self.bridge.imgmsg_to_cv2(data, "bgr8")
+      cv_depthimage = self.bridge.imgmsg_to_cv2(data, "mono8")
     except CvBridgeError as e:
       print(e)
 
@@ -27,7 +29,8 @@ class image_stream:
     #(rows,cols,channels) = cv_image.shape
     #if cols > 60 and rows > 60 :
     #    cv2.circle(cv_image, (50,50), 10, 255)
-    cv2.imshow("Image window", cv_image)
+    cv2.imshow("rgb", cv_rgbimage)
+    cv2.imshow("depth", cv_depthimage)
     cv2.waitKey(10)
     try:
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
