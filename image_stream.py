@@ -2,11 +2,11 @@ import rospy
 import roslib
 import cv2
 import sys
+import numpy as np
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-
 class image_stream:
   def __init__(self):
     # initilize publishers
