@@ -46,7 +46,7 @@ class image_stream:
     #    cv2.circle(cv_image, (50,50), 10, 255)
     depth_array = np.array(cv_depthimage, dtype=np.float32)
     depth_norm = cv2.normalize(depth_array, alpha=0, beta=1)
-    cv2.imshow("depth", cv_depthimage)
+    cv2.imshow("depth", depth_norm)
     cv2.waitKey(3)
     try:
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_depthimage, "32FC1"))
