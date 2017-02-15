@@ -36,14 +36,14 @@ class image_stream:
 	    except CvBridgeError as e:
 	      print(e)
 
-	def main(args):
-	  ic = image_stream()
-	  rospy.init_node('image_stream', anonymous=True)
-	  try:
-	    rospy.spin()
-	  except KeyboardInterrupt:
-	    print("Shutting down")
-	  cv2.destroyAllWindows()
+def main(args):
+  ic = image_stream()
+  rospy.init_node('image_stream', anonymous=True)
+  try:
+    rospy.spin()
+  except KeyboardInterrupt:
+    print("Shutting down")
+  cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main(sys.argv)
