@@ -36,7 +36,7 @@ class image_stream:
       print(e)
   def depth_callback(self,data):
     try:
-      cv_depthimage = self.bridge.imgmsg_to_cv2(data, "mono8")
+      cv_depthimage = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
       print(e)
 
@@ -48,7 +48,7 @@ class image_stream:
     cv2.imshow("depth", cv_depthimage)
     cv2.waitKey(3)
     try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_depthimage, "mono8"))
+      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_depthimage, "bgr8"))
     except CvBridgeError as e:
       print(e)
 
