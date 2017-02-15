@@ -8,16 +8,16 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
 class image_stream:
-	def __init__(self):
-		# initilize publishers
-		self.image_pub = rospy.Publisher("image_stream", Image)
-		# initlize subscriber
-		self.image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.callback)
-		self.image_sub = rospy.Subscriber("/camera/depth/image_raw", Image, self.callback)
-		self.bridge = CvBridge()
-        print("initilized")
+  def __init__(self):
+    # initilize publishers
+    self.image_pub = rospy.Publisher("image_stream", Image)
+    # initlize subscriber
+    self.image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.callback)
+    self.image_sub = rospy.Subscriber("/camera/depth/image_raw", Image, self.callback)
+    self.bridge = CvBridge()
+    print("initilized")
 
-	def callback(self,data):
+  def callback(self,data):
     try:
       cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
