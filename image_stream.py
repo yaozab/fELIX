@@ -44,7 +44,8 @@ class image_stream:
     #(rows,cols,channels) = cv_image.shape
     #if cols > 60 and rows > 60 :
     #    cv2.circle(cv_image, (50,50), 10, 255)
-    depth_norm = cv2.normalize(cv_depthimage, alpha=0, beta=1, normType = cv2.NORM_MINMAX, dtype = cv2.CV_32FC1)
+    depth_array = np.array(cv_depthimage, dtype=np.float32)
+    depth_norm = cv2.normalize(cv_depthimage, alpha=0, beta=1, normType=cv2.NORM_MINMAX)
     cv2.imshow("depth", cv_depthimage)
     cv2.waitKey(3)
     try:
