@@ -47,7 +47,7 @@ class image_stream:
     #    cv2.circle(cv_image, (50,50), 10, 255)
     #depth_array = np.array(cv_depthimage, dtype=np.float32)
     #print(depth_array)
-    depth_norm = cv2.normalize(cv_depthimage, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32FC1)
+    depth_norm = cv2.normalize(cv_depthimage, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
     cv2.imshow("depth", depth_norm)
     cv2.waitKey(3)
     try:
