@@ -12,8 +12,8 @@ class image_stream:
     # initilize publishers
     self.image_pub = rospy.Publisher("image_stream", Image)
     # initlize subscriber
-    self.rgb_image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.rgb_callback)
-    self.depth_image_sub = rospy.Subscriber("/camera/depth_registered/image_raw", Image, self.depth_callback)
+    #self.rgb_image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.rgb_callback)
+    self.depth_image_sub = rospy.Subscriber("/camera/depth/image", Image, self.depth_callback)
     self.bridge = CvBridge()
     print("initilized")
     cv2.namedWindow("rgb")
