@@ -12,7 +12,7 @@ class image_stream:
     # initilize publishers
     self.image_pub = rospy.Publisher("image_stream", Image)
     # initlize subscriber
-    #self.rgb_image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.rgb_callback)
+    self.rgb_image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.rgb_callback)
     self.depth_image_sub = rospy.Subscriber("/camera/depth_registered/image_raw", Image, self.depth_callback)
     self.bridge = CvBridge()
     print("initilized")
@@ -28,6 +28,7 @@ class image_stream:
     #(rows,cols,channels) = cv_image.shape
     #if cols > 60 and rows > 60 :
     #    cv2.circle(cv_image, (50,50), 10, 255)
+    print(cv_rgbimage)
     cv2.imshow("rgb", cv_rgbimage)
     cv2.waitKey(3)
     try:
@@ -44,6 +45,7 @@ class image_stream:
     #(rows,cols,channels) = cv_image.shape
     #if cols > 60 and rows > 60 :
     #    cv2.circle(cv_image, (50,50), 10, 255)
+    print(cv_depthimage)
     depth_array = np.array(cv_depthimage, dtype=np.float32)
     depth_norm = cv2.normalize(depth_array, alpha=0, beta=1)
     cv2.imshow("depth", depth_norm)
