@@ -46,7 +46,8 @@ class image_stream:
     #if cols > 60 and rows > 60 :
     #    cv2.circle(cv_image, (50,50), 10, 255)
     #depth_array = np.array(cv_depthimage, dtype=np.float32)
-    depth_norm = cv2.normalize(cv_depthimage, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
+    copy = cv_depthimage.copy()
+    depth_norm = cv2.normalize(cv_depthimage,copy, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
     print(depth_norm)
     cv2.imshow("depth", depth_norm)
     cv2.waitKey(3)
