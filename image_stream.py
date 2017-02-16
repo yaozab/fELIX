@@ -18,6 +18,7 @@ class image_stream:
     print("initilized")
     cv2.namedWindow("rgb")
     cv2.namedWindow("depth")
+    
   def rgb_callback(self,data):
     try:
       cv_rgbimage = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -31,13 +32,10 @@ class image_stream:
     #print(cv_rgbimage)
     cv2.imshow("rgb", cv_rgbimage)
     cv2.waitKey(3)
-    try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_rgbimage, "bgr8"))
-    except CvBridgeError as e:
-      print(e)
+
   def depth_callback(self,data):
     try:
-      cv_depthimage = self.bridge.imgmsg_to_cv2(data, "passthrough")
+      cv_depthimage = self.bridge.imgmsg_to_cv2(data)
     except CvBridgeError as e:
       print(e)
 
@@ -51,10 +49,6 @@ class image_stream:
     print(depth_norm)
     cv2.imshow("depth", depth_norm)
     cv2.waitKey(3)
-    try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(depth_norm, "32FC1"))
-    except CvBridgeError as e:
-      print(e)
 
 def main(args):
   ic = image_stream()
