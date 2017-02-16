@@ -23,11 +23,7 @@ class image_stream:
     except CvBridgeError as e:
       print(e)
 
-    print("showing rgb image")
-    #(rows,cols,channels) = cv_image.shape
-    #if cols > 60 and rows > 60 :
-    #    cv2.circle(cv_image, (50,50), 10, 255)
-    #print(cv_rgbimage)
+    #print("showing rgb image")
     cv2.imshow("rgb", cv_rgbimage)
     cv2.waitKey(1)
 
@@ -37,14 +33,12 @@ class image_stream:
     except CvBridgeError as e:
       print(e)
 
-    print("showing depth image")
-    #(rows,cols,channels) = cv_image.shape
-    #if cols > 60 and rows > 60 :
-    #    cv2.circle(cv_image, (50,50), 10, 255)
-    #depth_array = np.array(cv_depthimage, dtype=np.float32)
+    #print("showing depth image")
+    # normalize the depth image
     copy = cv_depthimage.copy()
     depth_norm = cv2.normalize(cv_depthimage,copy, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
-    print(depth_norm)
+    #print(depth_norm)
+    
     cv2.imshow("depth", depth_norm)
     cv2.waitKey(1)
 
