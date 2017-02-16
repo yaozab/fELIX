@@ -9,16 +9,14 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 class image_stream:
   def __init__(self):
-    # initilize publishers
-    self.image_pub = rospy.Publisher("image_stream", Image)
     # initlize subscriber
-    self.rgb_image_sub = rospy.Subscriber("/camera/rgb/image_color", Image, self.rgb_callback)
-    self.depth_image_sub = rospy.Subscriber("/camera/depth_registered/image_raw", Image, self.depth_callback)
+    self.rgb_image_sub = rospy.Subscriber("/camera/rgb/image_color/", Image, self.rgb_callback)
+    self.depth_image_sub = rospy.Subscriber("/camera/depth/image/", Image, self.depth_callback)
     self.bridge = CvBridge()
     print("initilized")
     cv2.namedWindow("rgb")
     cv2.namedWindow("depth")
-    
+
   def rgb_callback(self,data):
     try:
       cv_rgbimage = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -31,7 +29,7 @@ class image_stream:
     #    cv2.circle(cv_image, (50,50), 10, 255)
     #print(cv_rgbimage)
     cv2.imshow("rgb", cv_rgbimage)
-    cv2.waitKey(3)
+    cv2.waitKey(1)
 
   def depth_callback(self,data):
     try:
@@ -48,7 +46,7 @@ class image_stream:
     depth_norm = cv2.normalize(cv_depthimage,copy, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
     print(depth_norm)
     cv2.imshow("depth", depth_norm)
-    cv2.waitKey(3)
+    cv2.waitKey(1)
 
 def main(args):
   ic = image_stream()
