@@ -95,10 +95,11 @@ class GoForward():
 
   # functions to move the turtlebot                  
   def goBack(self):
-
+    print ('blsh')
   def turn(self, degrees):
-
+    print ('blah')
   def pause(self):
+    print ('blah')
 
   # what happens when stopped turtlebot
   def shutdown(self):
