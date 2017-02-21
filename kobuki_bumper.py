@@ -61,9 +61,9 @@ class kobuki_bumper():
 			  state = "un-hit"
 	    else:
 			  state = "HIT"
-	    if (data.button == BumperEvent.LEFT) :
+	    if (data.bumper == BumperEvent.LEFT) :
 			  bumper = "left"
-	    elif (data.button == BumperEvent.RIGHT) :
+	    elif (data.bumper == BumperEvent.RIGHT) :
 			  bumper = "right"
 	    else:
 			  bumper = "center"
