@@ -31,50 +31,51 @@ class GoForward():
   def __init__(self):
     # initiliaze
     rospy.init_node('GoForward', anonymous=False)
-
+    # tell user how to stop TurtleBot
+    rospy.loginfo("To stop TurtleBot CTRL + C")
+    # What function to call when you ctrl + c    
+    rospy.on_shutdown(self.shutdown)
+    # Create a publisher which can "talk" to TurtleBot and tell it to move
+    # Tip: You may need to change cmd_vel_mux/input/navi to /cmd_vel if you're not using TurtleBot2
+    self.cmd_vel = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
+    # create subscribers
     rospy.Subscriber("/mobile_base/events/bumper",BumperEvent,self.BumperEventCallback)
     rospy.Subscriber("/mobile_base/events/wheel_drop",WheelDropEvent,self.WheelDropEventCallback)
     stateMachine = FSM()
-    # tell user how to stop TurtleBot
-  rospy.loginfo("To stop TurtleBot CTRL + C")
-    # What function to call when you ctrl + c    
-  rospy.on_shutdown(self.shutdown)
-  	# Create a publisher which can "talk" to TurtleBot and tell it to move
-    # Tip: You may need to change cmd_vel_mux/input/navi to /cmd_vel if you're not using TurtleBot2
-  self.cmd_vel = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
+
   	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
-  r = rospy.Rate(10);
+    r = rospy.Rate(10);
+  def main():
+    if (stateMachine.getCurrentState() == 'Hit Left'):
+      # back, turn right, pause
+      print("hit left")
+      stateMachine.setCurrentState('Go Forward')
+    elif (stateMachine.getCurrentState() == 'Hit Right'):
+      # back, turn right, pause
+      print("hit right")
+      stateMachine.setCurrentState('Go Forward')
+    elif (stateMachine.getCurrentState() == 'Hit Center'):
+      # back, turn right, pause
+      print("hit center")
+      stateMachine.setCurrentState('Go Forward')
+    elif (stateMachine.getCurrentState() == 'Wheel Drop'):
+      # back, turn right, pause
+      print("wheel drop")
+      stateMachine.setCurrentState('Go Forward')
+    else:
+      # Twist is a datatype for velocity
+      move_cmd = Twist()
+      # let's go forward at 0.2 m/s
+      move_cmd.linear.x = 0.2
+      # let's turn at 0 radians/s
+      move_cmd.angular.z = 0
 
-  if (stateMachine.getCurrentState() == 'Hit Left'):
-    # back, turn right, pause
-    print("hit left")
-    stateMachine.setCurrentState('Go Forward')
-  elif (stateMachine.getCurrentState() == 'Hit Right'):
-    # back, turn right, pause
-    print("hit right")
-    stateMachine.setCurrentState('Go Forward')
-  elif (stateMachine.getCurrentState() == 'Hit Center'):
-    # back, turn right, pause
-    print("hit center")
-    stateMachine.setCurrentState('Go Forward')
-  elif (stateMachine.getCurrentState() == 'Wheel Drop'):
-    # back, turn right, pause
-    print("wheel drop")
-    stateMachine.setCurrentState('Go Forward')
-  else:
-    # Twist is a datatype for velocity
-    move_cmd = Twist()
-    # let's go forward at 0.2 m/s
-    move_cmd.linear.x = 0.2
-    # let's turn at 0 radians/s
-    move_cmd.angular.z = 0
-
-    # as long as you haven't ctrl + c keeping doing...
-    while not rospy.is_shutdown():
-      # publish the velocity
-      self.cmd_vel.publish(move_cmd)
-      # wait for 0.1 seconds (10 HZ) and publish again
-      r.sleep()
+      # as long as you haven't ctrl + c keeping doing...
+      while not rospy.is_shutdown():
+        # publish the velocity
+        self.cmd_vel.publish(move_cmd)
+        # wait for 0.1 seconds (10 HZ) and publish again
+        r.sleep()
 
   # callback functions
   def BumperEventCallback(self, data):
