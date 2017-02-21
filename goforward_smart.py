@@ -47,15 +47,19 @@ class GoForward():
 
     if (stateMachine.getCurrentState() == 'Hit Left'):
         # back, turn right, pause
+        print("hit left")
         stateMachine.setCurrentState('Go Forward')
     elif (stateMachine.getCurrentState() == 'Hit Right'):
         # back, turn right, pause
+        print("hit right")
         stateMachine.setCurrentState('Go Forward')
     elif (stateMachine.getCurrentState() == 'Hit Center'):
         # back, turn right, pause
+        print("hit center")
         stateMachine.setCurrentState('Go Forward')
     elif (stateMachine.getCurrentState() == 'Wheel Drop'):
         # back, turn right, pause
+        print("wheel drop")
         stateMachine.setCurrentState('Go Forward')
     else:
         # Twist is a datatype for velocity
