@@ -34,34 +34,35 @@ class GoForward():
     # tell user how to stop TurtleBot
     rospy.loginfo("To stop TurtleBot CTRL + C")
     # What function to call when you ctrl + c    
-    rospy.on_shutdown(self.shutdown)
+    rospy.on_shutdown(self.shutdown())
     # Create a publisher which can "talk" to TurtleBot and tell it to move
     # Tip: You may need to change cmd_vel_mux/input/navi to /cmd_vel if you're not using TurtleBot2
     self.cmd_vel = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
     # create subscribers
     rospy.Subscriber("/mobile_base/events/bumper",BumperEvent,self.BumperEventCallback)
     rospy.Subscriber("/mobile_base/events/wheel_drop",WheelDropEvent,self.WheelDropEventCallback)
-    stateMachine = FSM()
+    self.stateMachine = FSM()
 
   	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
-    r = rospy.Rate(10);
-  def main():
-    if (stateMachine.getCurrentState() == 'Hit Left'):
+    self.r = rospy.Rate(10);
+
+  def goForwardRun():
+    if (self.stateMachine.getCurrentState() == 'Hit Left'):
       # back, turn right, pause
       print("hit left")
-      stateMachine.setCurrentState('Go Forward')
-    elif (stateMachine.getCurrentState() == 'Hit Right'):
+      self.stateMachine.setCurrentState('Go Forward')
+    elif (self.stateMachine.getCurrentState() == 'Hit Right'):
       # back, turn right, pause
       print("hit right")
-      stateMachine.setCurrentState('Go Forward')
-    elif (stateMachine.getCurrentState() == 'Hit Center'):
+      self.stateMachine.setCurrentState('Go Forward')
+    elif (self.stateMachine.getCurrentState() == 'Hit Center'):
       # back, turn right, pause
       print("hit center")
-      stateMachine.setCurrentState('Go Forward')
-    elif (stateMachine.getCurrentState() == 'Wheel Drop'):
+      self.stateMachine.setCurrentState('Go Forward')
+    elif (self.stateMachine.getCurrentState() == 'Wheel Drop'):
       # back, turn right, pause
       print("wheel drop")
-      stateMachine.setCurrentState('Go Forward')
+      self.stateMachine.setCurrentState('Go Forward')
     else:
       # Twist is a datatype for velocity
       move_cmd = Twist()
@@ -76,31 +77,33 @@ class GoForward():
         self.cmd_vel.publish(move_cmd)
         # wait for 0.1 seconds (10 HZ) and publish again
         r.sleep()
+    # spin keeps pixhawk from exiting
+    rospy.spin()
 
   # callback functions
   def BumperEventCallback(self, data):
     if (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.LEFT):
-      stateMachine.setCurrentState('Hit Left')
+      self.stateMachine.setCurrentState('Hit Left')
     elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.RIGHT):
-      stateMachine.setCurrentState('Hit Right')
+      self.stateMachine.setCurrentState('Hit Right')
     elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.CENTER):
-      stateMachine.setCurrentState('Hit Center')
+      self.stateMachine.setCurrentState('Hit Center')
     else:
-      stateMachine.setCurrentState('Go Forward')
+      self.stateMachine.setCurrentState('Go Forward')
 
   def WheelDropEventCallback(self,data):
     if (data.state == WheelDropEvent.DROPPED):
-      stateMachine.setCurrentState('Wheel Drop')
+      self.stateMachine.setCurrentState('Wheel Drop')
     else:
-      stateMachine.setCurrentState('Go Forward')  
+      self.stateMachine.setCurrentState('Go Forward')  
 
   # functions to move the turtlebot                  
   def goBack(self):
-    print ('blsh')
+    print ('back it up')
   def turn(self, degrees):
-    print ('blah')
+    print ('turn away')
   def pause(self):
-    print ('blah')
+    print ('STOP')
 
   # what happens when stopped turtlebot
   def shutdown(self):
@@ -112,8 +115,8 @@ class GoForward():
     rospy.sleep(1)
 
 if __name__ == '__main__':
-    try:
-        GoForward()
-    except:
-        rospy.loginfo("GoForward node terminated.")
-
+  go = GoForward()
+  try:
+    go.goForwardRun()
+  except:
+    rospy.loginfo("GoForward node terminated.")
