@@ -13,5 +13,5 @@ class FSM:
 		return self.current_state
 
 	def setCurrentState(self, state):
-		if state in states:
+		if state in self.states:
 			self.current_state = state
