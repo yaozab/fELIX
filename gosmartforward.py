@@ -50,30 +50,30 @@ class GoForward():
      
 	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
         r = rospy.Rate(10);
-        print(self.stateMachine.getCurrentState())
-        if (self.stateMachine.getCurrentState() == 'Hit Left'):
-          # back, turn right, pause
-          print("hit left")
-          stateMachine.setCurrentState('Go Forward')
-        elif (stateMachine.getCurrentState() == 'Hit Right'):
-          # back, turn right, pause
-          print("hit right")
-          stateMachine.setCurrentState('Go Forward')
-        elif (stateMachine.getCurrentState() == 'Hit Center'):
-          # back, turn right, pause
-          print("hit center")
-          stateMachine.setCurrentState('Go Forward')
-        elif (stateMachine.getCurrentState() == 'Wheel Drop'):
-          # back, turn right, pause
-          print("wheel drop")
-          stateMachine.setCurrentState('Go Forward')
-        else:
-          # Twist is a datatype for velocity
-          move_cmd = Twist()
-          # let's go forward at 0.2 m/s
-          move_cmd.linear.x = 0.2
-          # let's turn at 0 radians/s
-          move_cmd.angular.z = 0
+  print(self.stateMachine.getCurrentState())
+  if (self.stateMachine.getCurrentState() == 'Hit Left'):
+    # back, turn right, pause
+    print("hit left")
+    stateMachine.setCurrentState('Go Forward')
+  elif (stateMachine.getCurrentState() == 'Hit Right'):
+    # back, turn right, pause
+    print("hit right")
+    stateMachine.setCurrentState('Go Forward')
+  elif (stateMachine.getCurrentState() == 'Hit Center'):
+    # back, turn right, pause
+    print("hit center")
+    stateMachine.setCurrentState('Go Forward')
+  elif (stateMachine.getCurrentState() == 'Wheel Drop'):
+    # back, turn right, pause
+    print("wheel drop")
+    stateMachine.setCurrentState('Go Forward')
+  else:
+    # Twist is a datatype for velocity
+    move_cmd = Twist()
+    # let's go forward at 0.2 m/s
+    move_cmd.linear.x = 0.2
+    # let's turn at 0 radians/s
+    move_cmd.angular.z = 0
 
 
 	# as long as you haven't ctrl + c keeping doing...
