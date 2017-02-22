@@ -113,7 +113,7 @@ def move():
     # let's turn at 0 radians/s
     move_cmd.angular.z = 0
   # publish the velocity
-  self.cmd_vel.publish(move_cmd)
+  gof.cmd_vel.publish(move_cmd)
   # wait for 0.1 seconds (10 HZ) and publish again
   gof.r.sleep()
   rospy.spin()
