@@ -44,24 +44,24 @@ class GoForward():
     self.stateMachine = FSM()
 
   	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
-    self.r = rospy.Rate(10);
+    r = rospy.Rate(10);
 
-  if (self.stateMachine.getCurrentState() == 'Hit Left'):
+  if (stateMachine.getCurrentState() == 'Hit Left'):
     # back, turn right, pause
     print("hit left")
-    self.stateMachine.setCurrentState('Go Forward')
-  elif (self.stateMachine.getCurrentState() == 'Hit Right'):
+    stateMachine.setCurrentState('Go Forward')
+  elif (stateMachine.getCurrentState() == 'Hit Right'):
     # back, turn right, pause
     print("hit right")
-    self.stateMachine.setCurrentState('Go Forward')
-  elif (self.stateMachine.getCurrentState() == 'Hit Center'):
+    stateMachine.setCurrentState('Go Forward')
+  elif (stateMachine.getCurrentState() == 'Hit Center'):
     # back, turn right, pause
     print("hit center")
-    self.stateMachine.setCurrentState('Go Forward')
-  elif (self.stateMachine.getCurrentState() == 'Wheel Drop'):
+    stateMachine.setCurrentState('Go Forward')
+  elif (stateMachine.getCurrentState() == 'Wheel Drop'):
     # back, turn right, pause
     print("wheel drop")
-    self.stateMachine.setCurrentState('Go Forward')
+    stateMachine.setCurrentState('Go Forward')
   else:
     # Twist is a datatype for velocity
     move_cmd = Twist()
