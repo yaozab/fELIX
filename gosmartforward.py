@@ -87,34 +87,35 @@ class GoForward():
         rospy.sleep(1)
 
 def move():
-  print(gof.stateMachine.getCurrentState())
-  if (gof.stateMachine.getCurrentState() == 'Hit Left'):
-    # back, turn right, pause
-    print("hit left")
-    gof.stateMachine.setCurrentState('Go Forward')
-  elif (gof.stateMachine.getCurrentState() == 'Hit Right'):
-    # back, turn right, pause
-    print("hit right")
-    gof.stateMachine.setCurrentState('Go Forward')
-  elif (gof.stateMachine.getCurrentState() == 'Hit Center'):
-    # back, turn right, pause
-    print("hit center")
-    gof.stateMachine.setCurrentState('Go Forward')
-  elif (gof.stateMachine.getCurrentState() == 'Wheel Drop'):
-    # back, turn right, pause
-    print("wheel drop")
-    gof.stateMachine.setCurrentState('Go Forward')
-  print("move")
-  # Twist is a datatype for velocity
-  move_cmd = Twist()
-  # let's go forward at 0.2 m/s
-  move_cmd.linear.x = 0.2
-  # let's turn at 0 radians/s
-  move_cmd.angular.z = 0
-  # publish the velocity
-  gof.cmd_vel.publish(move_cmd)
-  # wait for 0.1 seconds (10 HZ) and publish again
-  gof.r.sleep()
+  while not rospy.is_shutdown():
+    print(gof.stateMachine.getCurrentState())
+    if (gof.stateMachine.getCurrentState() == 'Hit Left'):
+      # back, turn right, pause
+      print("hit left")
+      gof.stateMachine.setCurrentState('Go Forward')
+    elif (gof.stateMachine.getCurrentState() == 'Hit Right'):
+      # back, turn right, pause
+      print("hit right")
+      gof.stateMachine.setCurrentState('Go Forward')
+    elif (gof.stateMachine.getCurrentState() == 'Hit Center'):
+      # back, turn right, pause
+      print("hit center")
+      gof.stateMachine.setCurrentState('Go Forward')
+    elif (gof.stateMachine.getCurrentState() == 'Wheel Drop'):
+      # back, turn right, pause
+      print("wheel drop")
+      gof.stateMachine.setCurrentState('Go Forward')
+    print("move")
+    # Twist is a datatype for velocity
+    move_cmd = Twist()
+    # let's go forward at 0.2 m/s
+    move_cmd.linear.x = 0.2
+    # let's turn at 0 radians/s
+    move_cmd.angular.z = 0
+    # publish the velocity
+    gof.cmd_vel.publish(move_cmd)
+    # wait for 0.1 seconds (10 HZ) and publish again
+    gof.r.sleep()
   rospy.spin()
 
 if __name__ == '__main__':
