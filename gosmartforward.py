@@ -79,7 +79,7 @@ class GoForward():
         # let's turn at 0 radians/s
         self.move_cmd.angular.z = 0
         self.cmd_vel.publish(self.move_cmd)
-        r.sleep()
+        self.r.sleep()
 
     def turn(self, degrees):
       print ('turn away')
@@ -89,10 +89,10 @@ class GoForward():
         turn_cmd.linear.x = 0
         turn_cmd.angular.z = radians(degrees); #45 deg/s in radians/s
         self.cmd_vel.publish(turn_cmd)
-        r.sleep() 
+        self.r.sleep() 
 
     def pause(self):
-      r.sleep(2)
+      self.r.sleep(2)
       print ('STOP')
         
     def shutdown(self):
