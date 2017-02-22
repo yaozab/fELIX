@@ -75,14 +75,10 @@ class GoForward():
           move_cmd.linear.x = 0.2
           # let's turn at 0 radians/s
           move_cmd.angular.z = 0
-
-
-    	# as long as you haven't ctrl + c keeping doing...
-        while not rospy.is_shutdown():
-      # publish the velocity
-            self.cmd_vel.publish(move_cmd)
-      # wait for 0.1 seconds (10 HZ) and publish again
-            r.sleep()
+        # publish the velocity
+        self.cmd_vel.publish(move_cmd)
+        # wait for 0.1 seconds (10 HZ) and publish again
+        r.sleep()
                         
       # callback functions
     def BumperEventCallback(self, data):
