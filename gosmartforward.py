@@ -74,7 +74,7 @@ class GoForward():
           move_cmd.linear.x = 0.2
           # let's turn at 0 radians/s
           move_cmd.angular.z = 0
-
+        rospy.spin()
 
     	# as long as you haven't ctrl + c keeping doing...
         while not rospy.is_shutdown():
