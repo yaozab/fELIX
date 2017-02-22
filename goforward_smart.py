@@ -46,39 +46,36 @@ class GoForward():
   	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
     self.r = rospy.Rate(10);
 
-  def goForwardRun():
-    if (self.stateMachine.getCurrentState() == 'Hit Left'):
-      # back, turn right, pause
-      print("hit left")
-      self.stateMachine.setCurrentState('Go Forward')
-    elif (self.stateMachine.getCurrentState() == 'Hit Right'):
-      # back, turn right, pause
-      print("hit right")
-      self.stateMachine.setCurrentState('Go Forward')
-    elif (self.stateMachine.getCurrentState() == 'Hit Center'):
-      # back, turn right, pause
-      print("hit center")
-      self.stateMachine.setCurrentState('Go Forward')
-    elif (self.stateMachine.getCurrentState() == 'Wheel Drop'):
-      # back, turn right, pause
-      print("wheel drop")
-      self.stateMachine.setCurrentState('Go Forward')
-    else:
-      # Twist is a datatype for velocity
-      move_cmd = Twist()
-      # let's go forward at 0.2 m/s
-      move_cmd.linear.x = 0.2
-      # let's turn at 0 radians/s
-      move_cmd.angular.z = 0
+  if (self.stateMachine.getCurrentState() == 'Hit Left'):
+    # back, turn right, pause
+    print("hit left")
+    self.stateMachine.setCurrentState('Go Forward')
+  elif (self.stateMachine.getCurrentState() == 'Hit Right'):
+    # back, turn right, pause
+    print("hit right")
+    self.stateMachine.setCurrentState('Go Forward')
+  elif (self.stateMachine.getCurrentState() == 'Hit Center'):
+    # back, turn right, pause
+    print("hit center")
+    self.stateMachine.setCurrentState('Go Forward')
+  elif (self.stateMachine.getCurrentState() == 'Wheel Drop'):
+    # back, turn right, pause
+    print("wheel drop")
+    self.stateMachine.setCurrentState('Go Forward')
+  else:
+    # Twist is a datatype for velocity
+    move_cmd = Twist()
+    # let's go forward at 0.2 m/s
+    move_cmd.linear.x = 0.2
+    # let's turn at 0 radians/s
+    move_cmd.angular.z = 0
 
-      # as long as you haven't ctrl + c keeping doing...
-      while not rospy.is_shutdown():
-        # publish the velocity
-        self.cmd_vel.publish(move_cmd)
-        # wait for 0.1 seconds (10 HZ) and publish again
-        r.sleep()
-    # spin keeps pixhawk from exiting
-    rospy.spin()
+    # as long as you haven't ctrl + c keeping doing...
+    while not rospy.is_shutdown():
+      # publish the velocity
+      self.cmd_vel.publish(move_cmd)
+      # wait for 0.1 seconds (10 HZ) and publish again
+      r.sleep()
 
   # callback functions
   def BumperEventCallback(self, data):
@@ -115,8 +112,7 @@ class GoForward():
     rospy.sleep(1)
 
 if __name__ == '__main__':
-  go = GoForward()
   try:
-    go.goForwardRun()
+    GoForward()
   except:
     rospy.loginfo("GoForward node terminated.")
