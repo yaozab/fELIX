@@ -51,34 +51,7 @@ class GoForward():
      
 	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
         r = rospy.Rate(10);
-        print(self.stateMachine.getCurrentState())
-        if (self.stateMachine.getCurrentState() == 'Hit Left'):
-          # back, turn right, pause
-          print("hit left")
-          stateMachine.setCurrentState('Go Forward')
-        elif (stateMachine.getCurrentState() == 'Hit Right'):
-          # back, turn right, pause
-          print("hit right")
-          stateMachine.setCurrentState('Go Forward')
-        elif (stateMachine.getCurrentState() == 'Hit Center'):
-          # back, turn right, pause
-          print("hit center")
-          stateMachine.setCurrentState('Go Forward')
-        elif (stateMachine.getCurrentState() == 'Wheel Drop'):
-          # back, turn right, pause
-          print("wheel drop")
-          stateMachine.setCurrentState('Go Forward')
-        else:
-          # Twist is a datatype for velocity
-          move_cmd = Twist()
-          # let's go forward at 0.2 m/s
-          move_cmd.linear.x = 0.2
-          # let's turn at 0 radians/s
-          move_cmd.angular.z = 0
-        # publish the velocity
-        self.cmd_vel.publish(move_cmd)
-        # wait for 0.1 seconds (10 HZ) and publish again
-        r.sleep()
+
                         
       # callback functions
     def BumperEventCallback(self, data):
@@ -112,11 +85,39 @@ class GoForward():
         self.cmd_vel.publish(Twist())
 	# sleep just makes sure TurtleBot receives the stop command prior to shutting down the script
         rospy.sleep(1)
- 
+
+def move():
+  print(gof.stateMachine.getCurrentState())
+  if (gof.stateMachine.getCurrentState() == 'Hit Left'):
+    # back, turn right, pause
+    print("hit left")
+    gof.stateMachine.setCurrentState('Go Forward')
+  elif (gof.stateMachine.getCurrentState() == 'Hit Right'):
+    # back, turn right, pause
+    print("hit right")
+    gof.stateMachine.setCurrentState('Go Forward')
+  elif (gof.stateMachine.getCurrentState() == 'Hit Center'):
+    # back, turn right, pause
+    print("hit center")
+    gof.stateMachine.setCurrentState('Go Forward')
+  elif (gof.stateMachine.getCurrentState() == 'Wheel Drop'):
+    # back, turn right, pause
+    print("wheel drop")
+    gof.stateMachine.setCurrentState('Go Forward')
+  else:
+    # Twist is a datatype for velocity
+    move_cmd = Twist()
+    # let's go forward at 0.2 m/s
+    move_cmd.linear.x = 0.2
+    # let's turn at 0 radians/s
+    move_cmd.angular.z = 0
+  # publish the velocity
+  gof.cmd_vel.publish(move_cmd)
+  # wait for 0.1 seconds (10 HZ) and publish again
+  r.sleep()
+  rospy.spin()
+
 if __name__ == '__main__':
-    try:
-        while True:
-          GoForward()
-    except:
-        rospy.loginfo("GoForward node terminated.")
+    gof = GoForward()
+    move()
 
