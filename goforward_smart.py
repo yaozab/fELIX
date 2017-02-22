@@ -41,7 +41,7 @@ class GoForward():
     # create subscribers
     rospy.Subscriber("/mobile_base/events/bumper",BumperEvent,self.BumperEventCallback)
     rospy.Subscriber("/mobile_base/events/wheel_drop",WheelDropEvent,self.WheelDropEventCallback)
-    stateMachine = FSM()
+    self.stateMachine = FSM()
 
   	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
     r = rospy.Rate(10);
