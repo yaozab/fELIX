@@ -119,8 +119,8 @@ class GoForward():
  
 if __name__ == '__main__':
     try:
-        GoForward()
-        rospy.spin()
+        while True:
+          GoForward()
     except:
         rospy.loginfo("GoForward node terminated.")
 
