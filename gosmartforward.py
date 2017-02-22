@@ -75,7 +75,7 @@ class GoForward():
     # functions to move the turtlebot                  
     def goBack(self):
       print ('back it up')
-      for x in range(0,20):
+      for x in range(0,10):
         self.move_cmd.linear.x = -0.2
         # let's turn at 0 radians/s
         self.move_cmd.angular.z = 0
@@ -84,7 +84,7 @@ class GoForward():
 
     def turn(self, degrees):
       print ('turn away')
-      for x in range(0,20):
+      for x in range(0,5):
         #let's turn at 45 deg/s
         turn_cmd = Twist()
         turn_cmd.linear.x = 0
@@ -93,7 +93,7 @@ class GoForward():
         self.r.sleep() 
 
     def pause(self):
-      self.r.sleep(2)
+      rospy.sleep(2)
       print ('STOP')
         
     def shutdown(self):
