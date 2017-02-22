@@ -26,6 +26,7 @@ from geometry_msgs.msg import Twist
 from kobuki_msgs.msg import BumperEvent
 from kobuki_msgs.msg import WheelDropEvent
 from FSM import FSM
+from math import radians
 
 class GoForward():
     def __init__(self):
@@ -74,7 +75,7 @@ class GoForward():
     # functions to move the turtlebot                  
     def goBack(self):
       print ('back it up')
-      for x in range(0,5):
+      for x in range(0,20):
         self.move_cmd.linear.x = -0.2
         # let's turn at 0 radians/s
         self.move_cmd.angular.z = 0
@@ -83,7 +84,7 @@ class GoForward():
 
     def turn(self, degrees):
       print ('turn away')
-      for x in range(0,5):
+      for x in range(0,20):
         #let's turn at 45 deg/s
         turn_cmd = Twist()
         turn_cmd.linear.x = 0
