@@ -50,7 +50,7 @@ class GoForward():
      
 	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
         r = rospy.Rate(10);
-    print(self.stateMachine.getCurrentState())
+        print(self.stateMachine.getCurrentState())
     if (self.stateMachine.getCurrentState() == 'Hit Left'):
       # back, turn right, pause
       print("hit left")
