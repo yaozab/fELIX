@@ -31,7 +31,7 @@ class GoForward():
     def __init__(self):
         # initiliaze
         rospy.init_node('GoForward', anonymous=False)
-        rospy.spin()
+
 
 	# tell user how to stop TurtleBot
 	rospy.loginfo("To stop TurtleBot CTRL + C")
@@ -120,6 +120,7 @@ class GoForward():
 if __name__ == '__main__':
     try:
         GoForward()
+        rospy.spin()
     except:
         rospy.loginfo("GoForward node terminated.")
 
