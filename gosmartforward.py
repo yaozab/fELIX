@@ -50,7 +50,7 @@ class GoForward():
 
      
 	#TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
-        r = rospy.Rate(10);
+        self.r = rospy.Rate(10);
 
                         
       # callback functions
@@ -114,7 +114,7 @@ def move():
   # publish the velocity
   gof.cmd_vel.publish(move_cmd)
   # wait for 0.1 seconds (10 HZ) and publish again
-  r.sleep()
+  gof.r.sleep()
   rospy.spin()
 
 if __name__ == '__main__':
