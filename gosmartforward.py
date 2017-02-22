@@ -77,11 +77,11 @@ class GoForward():
 
 
 	# as long as you haven't ctrl + c keeping doing...
-        while not rospy.is_shutdown():
-	    # publish the velocity
-            self.cmd_vel.publish(move_cmd)
-	    # wait for 0.1 seconds (10 HZ) and publish again
-            r.sleep()
+    while not rospy.is_shutdown():
+  # publish the velocity
+        self.cmd_vel.publish(move_cmd)
+  # wait for 0.1 seconds (10 HZ) and publish again
+        r.sleep()
                         
       # callback functions
     def BumperEventCallback(self, data):
