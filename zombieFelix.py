@@ -2,9 +2,9 @@
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
+import numpy as np
 
 class Scan_msg:
-    
   def __init__(self):
 		'''Initializes an object of this class.
 		The constructor creates a publisher, a twist message.
@@ -15,16 +15,20 @@ class Scan_msg:
 		self.sect_1 = 0
 		self.sect_2 = 0
 		self.sect_3 = 0
-		self.ang = {0:0,001:-1.2,10:-1.2,11:-1.2,100:1.5,101:1.0,110:1.0,111:1.2}
-		self.fwd = {0:.25,1:0,10:0,11:0,100:0.1,101:0,110:0,111:0}
-		self.dbgmsg = {0:'Move forward',1:'Veer right',10:'Veer right',11:'Veer right',100:'Veer left',101:'Veer left',110:'Veer left',111:'Veer right'}
+    self.sect_4 = 0
+    self.sect_5 = 0
+		self.ang = {0:0.8, 1:0.3, 2:0, 3:-0.3, 4:-0.8}
+		self.fwd = {0:0, 1:0, 2:0.25, 3:0, 4:0}
+		self.dbgmsg = {0:'turn left fast', 1:'turn left', 2:'go forward', 3:'turn right', 4:'turn right fast'}
 
 
   def reset_sect(self):
 		'''Resets the below variables before each new scan message is read'''
 		self.sect_1 = 0
-		self.sect_2 = 0
-		self.sect_3 = 0
+    self.sect_2 = 0
+    self.sect_3 = 0
+    self.sect_4 = 0
+    self.sect_5 = 0
 
   def sort(self, laserscan):
 		'''Goes through 'ranges' array in laserscan message and determines 
@@ -34,19 +38,29 @@ class Scan_msg:
 		Parameter laserscan is a laserscan message.'''
 		entries = len(laserscan.ranges)
 		for entry in range(0,entries):
-		    if 0.4 < laserscan.ranges[entry] < 0.75:
-			self.sect_1 = 1 if (0 < entry < entries/3) else 0 
-			self.sect_2 = 1 if (entries/3 < entry < entries/2) else 0
-			self.sect_3 = 1 if (entries/2 < entry < entries) else 0
-		rospy.loginfo("sort complete,sect_1: " + str(self.sect_1) + " sect_2: " + str(self.sect_2) + " sect_3: " + str(self.sect_3))
+			self.sect_1 += laserscan.ranges[entry] if (0 < entry < ceil(entries/5)) else 0 
+			self.sect_2 += laserscan.ranges[entry] if ((1 + ceil(entries/5)) < entry < ceil(entries*2/5)) else 0
+      self.sect_3 += laserscan.ranges[entry] if ((1 + ceil(entries*2/5)) < entry < ceil(entries*3/5)) else 0
+      self.sect_4 += laserscan.ranges[entry] if ((1 + ceil(entries*3/5)) < entry < ceil(entries*4/5)) else 0
+      self.sect_5 += laserscan.ranges[entry] if ((1 + ceil(entries*4/5)) < entry < entries) else 0
+    self.sect_1 = self.sect_1/ceil(entries/5)
+    self.sect_2 = self.sect_1/(ceil(entries*2/5) - (1 + ceil(entries/5)))
+    self.sect_3 = self.sect_1/(ceil(entries*3/5) - (1 + ceil(entries*2/5)))
+    self.sect_4 = self.sect_1/(ceil(entries*4/5) - (1 + ceil(entries*3/5)))
+    self.sect_5 = self.sect_1/(entries - ((1 + ceil(entries*4/5)))
+		rospy.loginfo("sort complete,sect_1: " + str(self.sect_1) + 
+                  " sect_2: " + str(self.sect_2) + 
+                  " sect_3: " + str(self.sect_3) + 
+                  " sect_4: " + str(self.sect_4) + 
+                  " sect_5: " + str(self.sect_5))
 
-  def movement(self, sect1, sect2, sect3):
+  def movement():
 		'''Uses the information known about the obstacles to move robot.
 		Parameters are class variables and are used to assign a value to
 		variable sect and then	set the appropriate angular and linear 
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
-		sect = int(str(self.sect_1) + str(self.sect_2) + str(self.sect_3))
+		sect = np.argmax([self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5])
 		rospy.loginfo("Sect = " + str(sect)) 
 	
     self.msg.angular.z = self.ang[sect]
@@ -61,7 +75,7 @@ class Scan_msg:
 		with the class sect variables as parameters.
 		Parameter laserscan is received from callback function.'''
 		self.sort(laserscan)
-		self.movement(self.sect_1, self.sect_2, self.sect_3)
+		self.movement()
 	
 
 def call_back(scanmsg):
