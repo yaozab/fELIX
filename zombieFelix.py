@@ -49,7 +49,7 @@ class Scan_msg:
 		sect = int(str(self.sect_1) + str(self.sect_2) + str(self.sect_3))
 		rospy.loginfo("Sect = " + str(sect)) 
 	
-       	self.msg.angular.z = self.ang[sect]
+    self.msg.angular.z = self.ang[sect]
 		self.msg.linear.x = self.fwd[sect]
 		rospy.loginfo(self.dbgmsg[sect])
 		self.pub.publish(self.msg)
