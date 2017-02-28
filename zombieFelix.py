@@ -56,6 +56,7 @@ class Scan_msg:
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
 		sect = np.argmax([self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5])
+		print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
 		print(sect, self.ang[sect], self.fwd[sect])
 		self.reset_sect()
         	self.msg.angular.z = self.ang[sect]
