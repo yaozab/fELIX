@@ -38,6 +38,7 @@ class Scan_msg:
 		or '1' (obstacles within 0.7 m)
 		Parameter laserscan is a laserscan message.'''
 		entries = len(laserscan.ranges)
+        print(laserscan.ranges[3])
 		for entry in range(0,entries):
 			if (0 < entry < ceil(entries/5)):
 				self.sect_1 += laserscan.ranges[entry] 
@@ -49,7 +50,7 @@ class Scan_msg:
 				self.sect_4 += laserscan.ranges[entry] 
 			if ((1 + ceil(entries*4/5)) < entry < entries):
 				self.sect_5 += laserscan.ranges[entry] 
-		print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
+		#print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
 		self.sect_1 = self.sect_1/ceil(entries/5)
 		self.sect_2 = self.sect_1/(ceil(entries*2/5) - (1 + ceil(entries/5)))
 		self.sect_3 = self.sect_1/(ceil(entries*3/5) - (1 + ceil(entries*2/5)))
@@ -62,7 +63,7 @@ class Scan_msg:
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
 		sect = np.argmax([self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5])
-		print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
+		#print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
 		print(sect, self.ang[sect], self.fwd[sect])
 		self.reset_sect()
         	self.msg.angular.z = self.ang[sect]
