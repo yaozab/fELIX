@@ -72,11 +72,12 @@ class Scan_msg:
 def goBack():
 	print ('back it up')
 	for x in range(0,10):
+		move_cmd = Twist()
 		move_cmd.linear.x = -0.2
 		# let's turn at 0 radians/s
 		move_cmd.angular.z = 0
-		cmd_vel.publish(self.move_cmd)
-		r.sleep()
+		cmd_vel.publish(move_cmd)
+		rospy.Rate(10).sleep()
 def turn(degrees):
 	print ('turn away')
 	for x in range(0,5):
@@ -85,7 +86,7 @@ def turn(degrees):
 		turn_cmd.linear.x = 0
 		turn_cmd.angular.z = radians(degrees); #45 deg/s in radians/s
 		cmd_vel.publish(turn_cmd)
-		r.sleep()
+		rospy.Rate(10).sleep()
 def pause():
 	rospy.sleep(2)
 	print ('STOP')
@@ -129,8 +130,6 @@ def listener():
 	rospy.init_node('navigation_sensors')
 	rospy.loginfo("Subscriber Starting")
 	sub = rospy.Subscriber('/scan', LaserScan, call_back)
-	self.move_cmd = Twist()
-	self.r = rospy.Rate(10)
 	# create subscribers
 	rospy.Subscriber("/mobile_base/events/bumper",BumperEvent,BumperEventCallback)
 	rospy.Subscriber("/mobile_base/events/wheel_drop",WheelDropEvent,WheelDropEventCallback)
