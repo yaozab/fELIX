@@ -76,7 +76,7 @@ class Scan_msg:
 		self.sort(laserscan)
 		self.movement()
 	# functions to move the turtlebot
-	def goBack(self):
+    def goBack(self):
 		print ('back it up')
 		for x in range(0,10):
 			move_cmd = Twist()
@@ -85,7 +85,7 @@ class Scan_msg:
 			move_cmd.angular.z = 0
 			self.pub.publish(move_cmd)
 			rospy.Rate(10).sleep()
-	def turn(self,degrees):
+    def turn(self,degrees):
 		print ('turn away')
 		for x in range(0,5):
 			#let's turn at 45 deg/s
@@ -94,7 +94,7 @@ class Scan_msg:
 			turn_cmd.angular.z = radians(degrees); #45 deg/s in radians/s
 			self.pub.publish(turn_cmd)
 			rospy.Rate(10).sleep()
-	def pause(self):
+    def pause(self):
 		rospy.sleep(2)
 		print ('STOP')
 # callback functions
