@@ -16,9 +16,26 @@ class Scan_msg:
 		self.sect_1 = 0
 		self.sect_2 = 0
 		self.sect_3 = 0
-		self.ang = {000:0, 001:-1.2, 010:-1.2, 011:-1.2, 100:1.5, 101:1.0, 110:1.0, 111:1.2}
-		self.fwd = {000:.25, 001:0, 010:0, 011:0, 100:0.1, 101:0, 110:0, 111:0}
-		self.dbgmsg = {0:'Move forward',1:'Veer right',10:'Veer right',11:'Veer right',100:'Veer left',101:'Veer left',110:'Veer left',111:'Veer right'}
+		self.sect_4 = 0
+		self.sect_5 = 0
+		self.ang = {00000: 0, 00001: 1.5, 00010: 2.5, 00011: 2.5, 00100: 2.5, 00101: 2.5,
+					00110: 2.5, 00111: 2.5, 01000: -1.5, 01001: 0, 01010: 0, 01011: 2.5,
+					01100: -2.5, 01101: 2.5, 01110: 2.5, 01111: 2.5, 10000: -1.5, 10001: 0,
+					10010: 0, 10011: 0, 10100: -2.5, 10101: -3.5, 10110: -2.5, 10111: 2.5,
+					11000: -2.5, 11001: 0, 11010: 0, 11011: 0, 11100: -2.5, 11101: -2.5,
+					11110: -2.5, 11111: -2.5}
+		self.fwd = {00000: 1, 00001: 0.25, 00010: 0, 00011: 0, 00100: 0, 00101: 0,
+					00110: 0, 00111: 0, 01000: 0, 01001: 1, 01010: 1, 01011: 0,
+					01100: 0, 01101: 0, 01110: 0, 01111: 0, 10000: 0.25, 10001: 1,
+					10010: 1, 10011: 1, 10100: 0, 10101: 0, 10110: 0, 10111: 0,
+					11000: 0, 11001: 1, 11010: 1, 11011: 1, 11100: 0, 11101: 0,
+					11110: 0, 11111: 0}
+		self.dbgmsg = {00000: 'fwd', 00001: 'left', 00010: 'left', 00011: 'left', 00100: 'left', 00101: 'left',
+					   00110: 'left', 00111: 'left', 01000: 'right', 01001: 'fwd', 01010: 'fwd', 01011: 'left',
+					   01100: 'right', 01101: 'left', 01110: 'left', 01111: 'left', 10000: 'right', 10001: 'fwd',
+					   10010: 'fwd', 10011: 'fwd', 10100: 'right', 10101: 'right', 10110: 'right', 10111: 'left',
+					   11000: 'right', 11001: 'fwd', 11010: 'fwd', 11011: 'fwd', 11100: 'right', 11101: 'right',
+					   11110: 'right', 11111: 'right'}
 
 
     def reset_sect(self):
@@ -26,6 +43,8 @@ class Scan_msg:
 		self.sect_1 = 0
 		self.sect_2 = 0
 		self.sect_3 = 0
+		self.sect_4 = 0
+		self.sect_5 = 0
 
     def sort(self, laserscan):
 		'''Goes through 'ranges' array in laserscan message and determines 
@@ -36,18 +55,20 @@ class Scan_msg:
 		entries = len(laserscan.ranges)
 		for entry in range(0,entries):
 		    if 0.4 < laserscan.ranges[entry] < 0.75:
-			self.sect_1 = 1 if (0 < entry < entries/3) else 0 
-			self.sect_2 = 1 if (entries/3 < entry < entries*2/3) else 0
-			self.sect_3 = 1 if (entries*2/3 < entry < entries) else 0
-		rospy.loginfo("sort complete,sect_1: " + str(self.sect_1) + " sect_2: " + str(self.sect_2) + " sect_3: " + str(self.sect_3))
+				self.sect_1 = 1 if (0 < entry < entries/5) else 0 
+				self.sect_2 = 1 if (entries/5 < entry < entries*2/5) else 0
+				self.sect_3 = 1 if (entries*2/5 < entry < entries*3/5) else 0
+				self.sect_4 = 1 if (entries*3/5 < entry < entries*4/5) else 0
+				self.sect_5 = 1 if (entries*4/5 < entry < entries) else 0
+		rospy.loginfo("sort complete,sect_1: " + str(self.sect_1) + " sect_2: " + str(self.sect_2) + " sect_3: " + str(self.sect_3) + " sect_4: " + str(self.sect_4) + " sect_4: " + str(self.sect_4))
 
-    def movement(self, sect1, sect2, sect3):
+    def movement(self):
 		'''Uses the information known about the obstacles to move robot.
 		Parameters are class variables and are used to assign a value to
 		variable sect and then	set the appropriate angular and linear 
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
-		sect = int(str(self.sect_1) + str(self.sect_2) + str(self.sect_3))
+		sect = int(str(self.sect_1) + str(self.sect_2) + str(self.sect_3) + str(self.sect_4) + str(self.sect_5))
 		rospy.loginfo("Sect = " + str(sect)) 
 	
        	self.msg.angular.z = self.ang[sect]
@@ -63,7 +84,7 @@ class Scan_msg:
 		with the class sect variables as parameters.
 		Parameter laserscan is received from callback function.'''
 		self.sort(laserscan)
-		self.movement(self.sect_1, self.sect_2, self.sect_3)
+		self.movement()
 	
 
 def call_back(scanmsg):
