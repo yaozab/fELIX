@@ -85,7 +85,58 @@ class Scan_msg:
 		Parameter laserscan is received from callback function.'''
 		self.sort(laserscan)
 		self.movement()
-	
+	# functions to move the turtlebot
+    def goBack(self):
+		print ('back it up')
+		for x in range(0,10):
+			move_cmd = Twist()
+			move_cmd.linear.x = -0.2
+			# let's turn at 0 radians/s
+			move_cmd.angular.z = 0
+			self.pub.publish(move_cmd)
+			rospy.Rate(10).sleep()
+    def turn(self,degrees):
+		print ('turn away')
+		for x in range(0,5):
+			#let's turn at 45 deg/s
+			turn_cmd = Twist()
+			turn_cmd.linear.x = 0
+			turn_cmd.angular.z = radians(degrees); #45 deg/s in radians/s
+			self.pub.publish(turn_cmd)
+			rospy.Rate(10).sleep()
+    def pause(self):
+		rospy.sleep(2)
+		print ('STOP')
+# callback functions
+def BumperEventCallback(data):
+	if (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.LEFT):
+		# move right
+		sub_obj.goBack()
+		sub_obj.turn(-45)
+		sub_obj.pause()
+		print("hit left")
+	elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.RIGHT):
+		# move left
+		sub_obj.goBack()
+		sub_obj.turn(45)
+		sub_obj.pause()
+	elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.CENTER):
+		# backwards
+		sub_obj.goBack()
+		sub_obj.turn(90)
+		sub_obj.pause()
+def WheelDropEventCallback(data):
+	if (data.state == WheelDropEvent.DROPPED):
+		# backwards
+		sub_obj.goBack()
+		sub_obj.turn(180)
+		sub_obj.pause()
+def CliffCallback(data):
+	if (data.state == CliffEvent.CLIFF):
+		# backwards
+		sub_obj.goBack()
+		sub_obj.turn(180)
+		sub_obj.pause()	
 
 def call_back(scanmsg):
     '''Passes laser scan message to for_callback function of sub_obj.
