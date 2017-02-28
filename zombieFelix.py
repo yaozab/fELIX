@@ -3,7 +3,7 @@ import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 import numpy as np
-import math
+from math import radians, ceil
 from FSM import FSM
 from kobuki_msgs.msg import BumperEvent
 from kobuki_msgs.msg import WheelDropEvent
