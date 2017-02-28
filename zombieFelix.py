@@ -21,16 +21,14 @@ class Scan_msg:
 		self.ang = {0:0.8, 1:0.3, 2:0, 3:-0.3, 4:-0.8}
 		self.fwd = {0:0, 1:0, 2:0.25, 3:0, 4:0}
 		self.dbgmsg = {0:'turn left fast', 1:'turn left', 2:'go forward', 3:'turn right', 4:'turn right fast'}
-
-	def reset_sect(self):
+    def reset_sect(self):
 		'''Resets the below variables before each new scan message is read'''
 		self.sect_1 = 0
 		self.sect_2 = 0
 		self.sect_3 = 0
 		self.sect_4 = 0
 		self.sect_5 = 0
-
-	def sort(self, laserscan):
+    def sort(self, laserscan):
 		'''Goes through 'ranges' array in laserscan message and determines
 		where obstacles are located. The class variables sect_1, sect_2,
 		and sect_3 are updated as either '0' (no obstacles within 0.7 m)
@@ -47,28 +45,20 @@ class Scan_msg:
 		self.sect_2 = self.sect_1/(ceil(entries*2/5) - (1 + ceil(entries/5)))
 		self.sect_3 = self.sect_1/(ceil(entries*3/5) - (1 + ceil(entries*2/5)))
 		self.sect_4 = self.sect_1/(ceil(entries*4/5) - (1 + ceil(entries*3/5)))
-		self.sect_5 = self.sect_1/(entries - ((1 + ceil(entries*4/5)))
-		rospy.loginfo("sort complete,sect_1: " + str(self.sect_1) +
-						" sect_2: " + str(self.sect_2) +
-						" sect_3: " + str(self.sect_3) +
-						" sect_4: " + str(self.sect_4) +
-						" sect_5: " + str(self.sect_5))
-
-	def movement():
+		self.sect_5 = self.sect_1/(entries - ((1 + ceil(entries*4/5))))
+    def movement(self):
 		'''Uses the information known about the obstacles to move robot.
 		Parameters are class variables and are used to assign a value to
 		variable sect and then	set the appropriate angular and linear
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
 		sect = np.argmax([self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5])
-		rospy.loginfo("Sect = " + str(sect))
-
 		self.msg.angular.z = self.ang[sect]
 		self.msg.linear.x = self.fwd[sect]
 		rospy.loginfo(self.dbgmsg[sect])
 		self.pub.publish(self.msg)
         self.reset_sect()
-
+        self.reset_sect()
     def for_callback(self,laserscan):
 		'''Passes laserscan onto function sort which gives the sect
 		variables the proper values.  Then the movement function is run
