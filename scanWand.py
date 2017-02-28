@@ -16,8 +16,8 @@ class Scan_msg:
 		self.sect_1 = 0
 		self.sect_2 = 0
 		self.sect_3 = 0
-		self.ang = {0:0,001:-1.2,10:-1.2,11:-1.2,100:1.5,101:1.0,110:1.0,111:1.2}
-		self.fwd = {0:.25,1:0,10:0,11:0,100:0.1,101:0,110:0,111:0}
+		self.ang = {000:0, 001:-1.2, 010:-1.2, 011:-1.2, 100:1.5, 101:1.0, 110:1.0, 111:1.2}
+		self.fwd = {000:.25, 001:0, 010:0, 011:0, 100:0.1, 101:0, 110:0, 111:0}
 		self.dbgmsg = {0:'Move forward',1:'Veer right',10:'Veer right',11:'Veer right',100:'Veer left',101:'Veer left',110:'Veer left',111:'Veer right'}
 
 
@@ -37,8 +37,8 @@ class Scan_msg:
 		for entry in range(0,entries):
 		    if 0.4 < laserscan.ranges[entry] < 0.75:
 			self.sect_1 = 1 if (0 < entry < entries/3) else 0 
-			self.sect_2 = 1 if (entries/3 < entry < entries/2) else 0
-			self.sect_3 = 1 if (entries/2 < entry < entries) else 0
+			self.sect_2 = 1 if (entries/3 < entry < entries*2/3) else 0
+			self.sect_3 = 1 if (entries*2/3 < entry < entries) else 0
 		rospy.loginfo("sort complete,sect_1: " + str(self.sect_1) + " sect_2: " + str(self.sect_2) + " sect_3: " + str(self.sect_3))
 
     def movement(self, sect1, sect2, sect3):
