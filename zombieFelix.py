@@ -130,6 +130,7 @@ def listener():
 	rospy.init_node('navigation_sensors')
 	rospy.loginfo("Subscriber Starting")
 	sub = rospy.Subscriber('/scan', LaserScan, call_back)
+	cmd_vel = rospy.Publisher('/cmd_vel_mux/input/navi',Twist)
 	# create subscribers
 	rospy.Subscriber("/mobile_base/events/bumper",BumperEvent,BumperEventCallback)
 	rospy.Subscriber("/mobile_base/events/wheel_drop",WheelDropEvent,WheelDropEventCallback)
