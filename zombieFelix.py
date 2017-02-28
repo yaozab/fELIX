@@ -39,11 +39,17 @@ class Scan_msg:
 		Parameter laserscan is a laserscan message.'''
 		entries = len(laserscan.ranges)
 		for entry in range(0,entries):
-			self.sect_1 += laserscan.ranges[entry] if (0 < entry < ceil(entries/5)) else 0
-			self.sect_2 += laserscan.ranges[entry] if ((1 + ceil(entries/5)) < entry < ceil(entries*2/5)) else 0
-			self.sect_3 += laserscan.ranges[entry] if ((1 + ceil(entries*2/5)) < entry < ceil(entries*3/5)) else 0
-			self.sect_4 += laserscan.ranges[entry] if ((1 + ceil(entries*3/5)) < entry < ceil(entries*4/5)) else 0
-			self.sect_5 += laserscan.ranges[entry] if ((1 + ceil(entries*4/5)) < entry < entries) else 0
+			if (0 < entry < ceil(entries/5)):
+				self.sect_1 += laserscan.ranges[entry] 
+			if ((1 + ceil(entries/5)) < entry < ceil(entries*2/5)):
+				self.sect_2 += laserscan.ranges[entry] 
+			if ((1 + ceil(entries*2/5)) < entry < ceil(entries*3/5)):
+				self.sect_3 += laserscan.ranges[entry] 
+			if ((1 + ceil(entries*3/5)) < entry < ceil(entries*4/5)):
+				self.sect_4 += laserscan.ranges[entry] 
+			if ((1 + ceil(entries*4/5)) < entry < entries):
+				self.sect_5 += laserscan.ranges[entry] 
+		print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
 		self.sect_1 = self.sect_1/ceil(entries/5)
 		self.sect_2 = self.sect_1/(ceil(entries*2/5) - (1 + ceil(entries/5)))
 		self.sect_3 = self.sect_1/(ceil(entries*3/5) - (1 + ceil(entries*2/5)))
