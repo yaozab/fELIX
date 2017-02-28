@@ -21,14 +21,14 @@ class Scan_msg:
 		self.ang = {0:0.8, 1:0.3, 2:0, 3:-0.3, 4:-0.8}
 		self.fwd = {0:0, 1:0, 2:0.25, 3:0, 4:0}
 		self.dbgmsg = {0:'turn left fast', 1:'turn left', 2:'go forward', 3:'turn right', 4:'turn right fast'}
-    def reset_sect(self):
+	def reset_sect(self):
 		'''Resets the below variables before each new scan message is read'''
 		self.sect_1 = 0
 		self.sect_2 = 0
 		self.sect_3 = 0
 		self.sect_4 = 0
 		self.sect_5 = 0
-    def sort(self, laserscan):
+	def sort(self, laserscan):
 		'''Goes through 'ranges' array in laserscan message and determines
 		where obstacles are located. The class variables sect_1, sect_2,
 		and sect_3 are updated as either '0' (no obstacles within 0.7 m)
@@ -46,20 +46,22 @@ class Scan_msg:
 		self.sect_3 = self.sect_1/(ceil(entries*3/5) - (1 + ceil(entries*2/5)))
 		self.sect_4 = self.sect_1/(ceil(entries*4/5) - (1 + ceil(entries*3/5)))
 		self.sect_5 = self.sect_1/(entries - ((1 + ceil(entries*4/5))))
-    def movement(self):
+	def movement():
 		'''Uses the information known about the obstacles to move robot.
 		Parameters are class variables and are used to assign a value to
 		variable sect and then	set the appropriate angular and linear
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
 		sect = np.argmax([self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5])
+		rospy.loginfo("Sect = " + str(sect))
+
 		self.msg.angular.z = self.ang[sect]
 		self.msg.linear.x = self.fwd[sect]
 		rospy.loginfo(self.dbgmsg[sect])
 		self.pub.publish(self.msg)
-        self.reset_sect()
-        self.reset_sect()
-    def for_callback(self,laserscan):
+    self.reset_sect()
+
+  def for_callback(self,laserscan):
 		'''Passes laserscan onto function sort which gives the sect
 		variables the proper values.  Then the movement function is run
 		with the class sect variables as parameters.
@@ -75,7 +77,6 @@ def goBack(self):
 		self.move_cmd.angular.z = 0
 		self.cmd_vel.publish(self.move_cmd)
 		self.r.sleep()
-
 def turn(self, degrees):
 	print ('turn away')
 	for x in range(0,5):
@@ -88,7 +89,6 @@ def turn(self, degrees):
 def pause(self):
 	rospy.sleep(2)
 	print ('STOP')
-
 # callback functions
 def BumperEventCallback(self, data):
 	if (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.LEFT):
@@ -107,26 +107,22 @@ def BumperEventCallback(self, data):
 		goBack()
 		turn(90)
 		pause()
-
 def WheelDropEventCallback(self,data):
 	if (data.state == WheelDropEvent.DROPPED):
 		# backwards
 		goBack()
 		turn(180)
 		pause()
-
 def CliffCallback(self,data):
 	if (data.state == CliffEvent.CLIFF):
 		# backwards
 		goBack()
 		turn(180)
 		pause()
-
 def call_back(scanmsg):
 	 '''Passes laser scan message to for_callback function of sub_obj.
 	 Parameter scanmsg is laserscan message.'''
 	sub_obj.for_callback(scanmsg)
-
 def listener():
 	'''Initializes node, creates subscriber, and states callback
 	function.'''
@@ -138,7 +134,6 @@ def listener():
 	rospy.Subscriber("/mobile_base/events/wheel_drop",WheelDropEvent,self.WheelDropEventCallback)
 	rospy.Subscriber("/mobile_base/events/cliff",CliffEvent,self.CliffCallback)
 	rospy.spin()
-
 if __name__ == "__main__":
 	'''A Scan_msg class object called sub_obj is created and listener
 	function is run'''
