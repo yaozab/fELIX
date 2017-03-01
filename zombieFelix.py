@@ -99,9 +99,8 @@ class Scan_msg:
     def pause(self):
 		rospy.sleep(5)
 		print ('STOP')
-# callback functions
-def BumperEventCallback(data):
-	sub.shutdown()
+	# callback functions
+def BumperEventCallback(self,data):
 	if (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.LEFT):
 		# move right
 		#sub_obj.goBack()
@@ -118,23 +117,18 @@ def BumperEventCallback(data):
 		#sub_obj.goBack()
 		#sub_obj.turn(90)
 		sub_obj.pause()
-	sub = rospy.Subscriber('/scan', LaserScan, call_back)
 def WheelDropEventCallback(data):
-	sub.shutdown()
 	if (data.state == WheelDropEvent.DROPPED):
 		# backwards
 		#sub_obj.goBack()
 		#sub_obj.turn(180)
 		sub_obj.pause()
-	sub = rospy.Subscriber('/scan', LaserScan, call_back)
 def CliffCallback(data):
-	sub.shutdown()
 	if (data.state == CliffEvent.CLIFF):
 		# backwards
 		#sub_obj.goBack()
 		#sub_obj.turn(180)
 		sub_obj.pause()
-	sub = rospy.Subscriber('/scan', LaserScan, call_back)
 def call_back(scanmsg):
 	'''Passes laser scan message to for_callback function of sub_obj.
 	Parameter scanmsg is laserscan message.'''
