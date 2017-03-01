@@ -3,6 +3,7 @@ import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 import numpy as np
+import math
 from math import radians, ceil
 from FSM import FSM
 from kobuki_msgs.msg import BumperEvent
@@ -21,8 +22,8 @@ class Scan_msg:
 		self.sect_3 = 0
 		self.sect_4 = 0
 		self.sect_5 = 0
-		self.ang = {0:0.8, 1:0.3, 2:0, 3:-0.3, 4:-0.8}
-		self.fwd = {0:0, 1:0, 2:0.25, 3:0, 4:0}
+		self.ang = {0:-0.8, 1:-0.3, 2:0, 3:0.3, 4:0.8}
+		self.fwd = {0:0, 1:0, 2:.25, 3:0, 4:0}
 		self.dbgmsg = {0:'turn left fast', 1:'turn left', 2:'go forward', 3:'turn right', 4:'turn right fast'}
     def reset_sect(self):
 		'''Resets the below variables before each new scan message is read'''
@@ -38,37 +39,37 @@ class Scan_msg:
 		or '1' (obstacles within 0.7 m)
 		Parameter laserscan is a laserscan message.'''
 		entries = len(laserscan.ranges)
-        print(laserscan.ranges[3])
+        	#print(laserscan.ranges[3])
 		for entry in range(0,entries):
-			if (0 < entry < ceil(entries/5)):
-				self.sect_1 += laserscan.ranges[entry] 
-			if ((1 + ceil(entries/5)) < entry < ceil(entries*2/5)):
+			if (0 < entry < ceil(entries/5) and not math.isnan(laserscan.ranges[entry])):
+				self.sect_1 = self.sect_1 + laserscan.ranges[entry] 
+			if ((1 + ceil(entries/5)) < entry < ceil(entries*2/5) and not math.isnan(laserscan.ranges[entry])):
 				self.sect_2 += laserscan.ranges[entry] 
-			if ((1 + ceil(entries*2/5)) < entry < ceil(entries*3/5)):
+			if ((1 + ceil(entries*2/5)) < entry < ceil(entries*3/5) and not math.isnan(laserscan.ranges[entry])):
 				self.sect_3 += laserscan.ranges[entry] 
-			if ((1 + ceil(entries*3/5)) < entry < ceil(entries*4/5)):
+			if ((1 + ceil(entries*3/5)) < entry < ceil(entries*4/5) and not math.isnan(laserscan.ranges[entry])):
 				self.sect_4 += laserscan.ranges[entry] 
-			if ((1 + ceil(entries*4/5)) < entry < entries):
+			if ((1 + ceil(entries*4/5)) < entry < entries and not math.isnan(laserscan.ranges[entry])):
 				self.sect_5 += laserscan.ranges[entry] 
-		#print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
-		self.sect_1 = self.sect_1/ceil(entries/5)
-		self.sect_2 = self.sect_1/(ceil(entries*2/5) - (1 + ceil(entries/5)))
-		self.sect_3 = self.sect_1/(ceil(entries*3/5) - (1 + ceil(entries*2/5)))
-		self.sect_4 = self.sect_1/(ceil(entries*4/5) - (1 + ceil(entries*3/5)))
-		self.sect_5 = self.sect_1/(entries - ((1 + ceil(entries*4/5))))
+		self.sect_1 = self.sect_1/(entries/5)
+		self.sect_2 = self.sect_2/(entries/5)
+		self.sect_3 = self.sect_3/(entries/5)
+		self.sect_4 = self.sect_4/(entries/5)
+		self.sect_5 = self.sect_5/(entries/5)
     def movement(self):
 		'''Uses the information known about the obstacles to move robot.
 		Parameters are class variables and are used to assign a value to
 		variable sect and then	set the appropriate angular and linear
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
-		sect = np.argmax([self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5])
-		#print(self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5)
+		array = [self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5]
+		sect = np.argmax(array)
 		print(sect, self.ang[sect], self.fwd[sect])
 		self.reset_sect()
         	self.msg.angular.z = self.ang[sect]
 		self.msg.linear.x = self.fwd[sect]
 		self.pub.publish(self.msg)
+		
     def for_callback(self,laserscan):
 		'''Passes laserscan onto function sort which gives the sect
 		variables the proper values.  Then the movement function is run
@@ -96,38 +97,44 @@ class Scan_msg:
 			self.pub.publish(turn_cmd)
 			rospy.Rate(10).sleep()
     def pause(self):
-		rospy.sleep(2)
+		rospy.sleep(5)
 		print ('STOP')
 # callback functions
 def BumperEventCallback(data):
+	sub.shutdown()
 	if (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.LEFT):
 		# move right
-		sub_obj.goBack()
-		sub_obj.turn(-45)
+		#sub_obj.goBack()
+		#sub_obj.turn(-45)
 		sub_obj.pause()
 		print("hit left")
 	elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.RIGHT):
 		# move left
-		sub_obj.goBack()
-		sub_obj.turn(45)
+		#sub_obj.goBack()
+		#sub_obj.turn(45)
 		sub_obj.pause()
 	elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.CENTER):
 		# backwards
-		sub_obj.goBack()
-		sub_obj.turn(90)
+		#sub_obj.goBack()
+		#sub_obj.turn(90)
 		sub_obj.pause()
+	sub = rospy.Subscriber('/scan', LaserScan, call_back)
 def WheelDropEventCallback(data):
+	sub.shutdown()
 	if (data.state == WheelDropEvent.DROPPED):
 		# backwards
-		sub_obj.goBack()
-		sub_obj.turn(180)
+		#sub_obj.goBack()
+		#sub_obj.turn(180)
 		sub_obj.pause()
+	sub = rospy.Subscriber('/scan', LaserScan, call_back)
 def CliffCallback(data):
+	sub.shutdown()
 	if (data.state == CliffEvent.CLIFF):
 		# backwards
-		sub_obj.goBack()
-		sub_obj.turn(180)
+		#sub_obj.goBack()
+		#sub_obj.turn(180)
 		sub_obj.pause()
+	sub = rospy.Subscriber('/scan', LaserScan, call_back)
 def call_back(scanmsg):
 	'''Passes laser scan message to for_callback function of sub_obj.
 	Parameter scanmsg is laserscan message.'''
