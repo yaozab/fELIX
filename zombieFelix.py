@@ -32,12 +32,9 @@ class Scan_msg:
 		self.sect_3 = 0
 		self.sect_4 = 0
 		self.sect_5 = 0
+		self.state = FSM()
+		self.state.setCurrentState('Scan')
     def sort(self, laserscan):
-		'''Goes through 'ranges' array in laserscan message and determines
-		where obstacles are located. The class variables sect_1, sect_2,
-		and sect_3 are updated as either '0' (no obstacles within 0.7 m)
-		or '1' (obstacles within 0.7 m)
-		Parameter laserscan is a laserscan message.'''
 		entries = len(laserscan.ranges)
         	#print(laserscan.ranges[3])
 		for entry in range(0,entries):
@@ -62,14 +59,39 @@ class Scan_msg:
 		variable sect and then	set the appropriate angular and linear
 		velocities, and log messages.
 		These are published and the sect variables are reset.'''
-		array = [self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5]
-		sect = np.argmax(array)
-		print(sect, self.ang[sect], self.fwd[sect])
-		self.reset_sect()
-        	self.msg.angular.z = self.ang[sect]
-		self.msg.linear.x = self.fwd[sect]
-		self.pub.publish(self.msg)
-		
+		if self.state.getCurrentState() == 'Scan':
+			array = [self.sect_1, self.sect_2, self.sect_3, self.sect_4, self.sect_5]
+			sect = np.argmax(array)
+			print(sect, self.ang[sect], self.fwd[sect])
+			self.reset_sect()
+	        	self.msg.angular.z = self.ang[sect]
+			self.msg.linear.x = self.fwd[sect]
+			self.pub.publish(self.msg)
+		elif self.state.getCurrentState() == 'Hit Left':
+			self.goBack()
+			self.turn(-45)
+			self.pause()
+			self.state.setCurrentState('Scan')
+		elif self.state.getCurrentState() == 'Hit Right':
+			self.goBack()
+			self.turn(45)
+			self.pause()
+			self.state.setCurrentState('Scan')
+		elif self.state.getCurrentState() == 'Hit Center':
+			self.goBack()
+			self.turn(90)
+			self.pause()
+			self.state.setCurrentState('Scan')
+		elif self.state.getCurrentState() == 'Wheel Drop':
+			self.goBack()
+			self.turn(180)
+			self.pause()
+			self.state.setCurrentState('Scan')
+		elif self.state.getCurrentState() == 'Cliff':
+			self.goBack()
+			self.turn(180)
+			self.pause()
+			self.state.setCurrentState('Scan')
     def for_callback(self,laserscan):
 		'''Passes laserscan onto function sort which gives the sect
 		variables the proper values.  Then the movement function is run
@@ -77,7 +99,7 @@ class Scan_msg:
 		Parameter laserscan is received from callback function.'''
 		self.sort(laserscan)
 		self.movement()
-	# functions to move the turtlebot
+	# functions to move the turtlebot from sensor events
     def goBack(self):
 		print ('back it up')
 		for x in range(0,10):
@@ -97,38 +119,22 @@ class Scan_msg:
 			self.pub.publish(turn_cmd)
 			rospy.Rate(10).sleep()
     def pause(self):
-		rospy.sleep(5)
+		rospy.sleep(2)
 		print ('STOP')
 	# callback functions
 def BumperEventCallback(self,data):
 	if (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.LEFT):
-		# move right
-		#sub_obj.goBack()
-		#sub_obj.turn(-45)
-		sub_obj.pause()
-		print("hit left")
+		sub_obj.state.setCurrentState('Hit Left')
 	elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.RIGHT):
-		# move left
-		#sub_obj.goBack()
-		#sub_obj.turn(45)
-		sub_obj.pause()
+		sub_obj.state.setCurrentState('Hit Right')
 	elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.CENTER):
-		# backwards
-		#sub_obj.goBack()
-		#sub_obj.turn(90)
-		sub_obj.pause()
+		sub_obj.state.setCurrentState('Hit Center')
 def WheelDropEventCallback(data):
 	if (data.state == WheelDropEvent.DROPPED):
-		# backwards
-		#sub_obj.goBack()
-		#sub_obj.turn(180)
-		sub_obj.pause()
+		sub_obj.state.setCurrentState('Wheel Drop')
 def CliffCallback(data):
 	if (data.state == CliffEvent.CLIFF):
-		# backwards
-		#sub_obj.goBack()
-		#sub_obj.turn(180)
-		sub_obj.pause()
+		sub_obj.state.setCurrentState('Cliff')
 def call_back(scanmsg):
 	'''Passes laser scan message to for_callback function of sub_obj.
 	Parameter scanmsg is laserscan message.'''

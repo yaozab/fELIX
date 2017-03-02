@@ -3,7 +3,7 @@
 class FSM:
 
 	current_state = None
-	states = {'Go Forward', 'Hit Left', 'Hit Right', 'Hit Center', 'Wheel Drop'}
+	states = {'Go Forward', 'Hit Left', 'Hit Right', 'Hit Center', 'Wheel Drop', 'Cliff', 'Scan'}
 
 	def __init__(self):
 		self.current_state = 'Go Forward'
