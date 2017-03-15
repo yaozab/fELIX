@@ -39,9 +39,39 @@ class follow_the_gap:
 				laserArr[entry] = laserscan.range_max
 			else:
 				laserArr[entry] = laserscan.range_min
-		binLaserscan.ranges = laserArr
+		# make gap array and check for faulty NaN
+		isObstacleFirst = False
+		minCounter = 0
+		previousVal = laserscan.range_min
+		minStartIndex = 0
+		gapIndexes = []
+		for entry in range(0,entries):
+			if laserArr[entry] == laserscan.range_max:
+				if entry == 0:
+					isObstacleFirst = True
+				if previousVal == laserscan.range_min and minCounter > 5:
+					gapIndexes.append(entry)
+					minCounter = 0
+			if laserArr[entry] == laserscan.range_min:
+				if previousVal == laserscan.range_max and minCounter <=5:
+					minStartIndex = entry
+				if minCounter > 5:
+					gapIndexes.append(minStartIndex-1)
+				minCounter += 1
+			previousVal = laserArr[entry]
+		print(gapIndexes)
+		# gapIndexes is storing the start and end of the gap arrays.
+		middleVal = math.ceil(entries/2)
+		for i in range(0,len(gapIndexes)):
+			self.obstacles[i] = -(middleVal - i) * laserscan.angle_increment
+
 		self.pub.publish(binLaserscan)
 		self.r.sleep()
+
+	def makeGapArray(self, laserArr,):
+		entries = len(laserscan.ranges)
+
+
 
     def shutdown(self):
 		rospy.loginfo("shutdown")
