@@ -32,46 +32,48 @@ class follow_the_gap:
 		# take in laserscan data, and account for NAN
 		entries = len(laserscan.ranges)
 		# make binary array, one if obstacle 0 if free
+		nanCounter = 0
+		previousVal = laserscan.range_min
 		binLaserscan = laserscan
+		nanStartIndex = 0
 		laserArr = np.zeros(entries)
 		for entry in range(0,entries):
 			if (laserscan.ranges[entry] > 1.5):
 				laserArr[entry] = laserscan.range_max
 			else:
-				laserArr[entry] = laserscan.range_min
-		# make gap array and check for faulty NaN
-		isObstacleFirst = False
-		minCounter = 0
-		previousVal = laserscan.range_min
-		minStartIndex = 0
-		gapIndexes = []
+				# if nan and close
+				if nanCounter > 5:
+					for j in range(nanStartIndex, entry+1)
+						laserArr[j] = laserscan.range_min
+					nanCounter = 0
+				else:
+					if math.isnan(laserscan.ranges[entry]):
+						if nanCounter == 0:
+							nanStartIndex = entry
+						laserArr[entry] = laserscan.range_max
+						nanCounter += 1
+			previousVal = laserscan.ranges[entry]
+
+		# making the gap index
+		previousVal = 0
+		gapIndex = []
 		for entry in range(0,entries):
-			if laserArr[entry] == laserscan.range_max:
-				if entry == 0:
-					isObstacleFirst = True
-				if previousVal == laserscan.range_min and minCounter > 5:
-					gapIndexes.append(entry)
-					minCounter = 0
-			if laserArr[entry] == laserscan.range_min:
-				if previousVal == laserscan.range_max and minCounter <=5:
-					minStartIndex = entry
-				if minCounter > 5:
-					gapIndexes.append(minStartIndex-1)
-				minCounter += 1
-			previousVal = laserArr[entry]
-		print(gapIndexes)
+			if previousVal == 0:
+				previousVal = laserArr[entry]
+			else:
+				if laserArr[entry] == laserscan.range_max and previousVal == laserscan.range_min:
+					gapIndex.append(entry)
+				if laserArr[entry] == laserscan.range_min and previousVal == laserscan.range_max:
+					gapIndex.append(entry)
+				previousVal = laserArr[entry]
+		print gapIndex
 		# gapIndexes is storing the start and end of the gap arrays.
-		middleVal = math.ceil(entries/2)
-		for i in range(0,len(gapIndexes)):
-			self.obstacles[i] = -(middleVal - i) * laserscan.angle_increment
+		#middleVal = math.ceil(entries/2)
+		#for i in range(0,len(gapIndexes)):
+		#	self.obstacles[i] = -(middleVal - i) * laserscan.angle_increment
 
 		self.pub.publish(binLaserscan)
-		self.r.sleep()
-
-	def makeGapArray(self, laserArr,):
-		entries = len(laserscan.ranges)
-
-
+		self.r.sleep() 
 
     def shutdown(self):
 		rospy.loginfo("shutdown")
