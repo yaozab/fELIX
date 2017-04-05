@@ -78,7 +78,7 @@ class follow_the_gap:
 		leftDiff = center - largestGapIndexes[0]
 		rightDiff = center - largestGapIndexes[1]
 		middleDiff = ceil((leftDiff + rightDiff)/2)
-		gapCenterAngle = middleDiff * laserscan.angle_increment
+		gapCenterAngle = -middleDiff * laserscan.angle_increment
 		
 		#print(min(laserscan.ranges))
 		#print (entries, largestGapIndexes, leftDiff, rightDiff, middleDiff, gapCenterAngle)
