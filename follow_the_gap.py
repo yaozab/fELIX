@@ -18,20 +18,43 @@ class follow_the_gap:
 		3 dictionaries are to keep track of the movement and log messages.'''
 		rospy.init_node('follow_the_gap', anonymous=True)
 		rospy.loginfo("follow the gap starting")
-		self.sub = rospy.Subscriber('/scan', LaserScan, self.call_back)
+
+		self.sub = rospy.Subscriber('/scan', LaserScan, self.laser_call_back)
 		self.pub = rospy.Publisher('/gapscan',LaserScan, queue_size = 10)
+		self.cmd_vel = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
+		#rospy.Subscriber("/mobile_base/events/bumper",BumperEvent,self.BumperEventCallback)
+    	#rospy.Subscriber("/mobile_base/events/wheel_drop",WheelDropEvent,self.WheelDropEventCallback)
+
 		self.gapArray = []
 		self.obstacles = []
-		self.r = rospy.Rate(5)		
+		self.r = rospy.Rate(5)
+		self.forwardSpeed = 0.2
+		self.angularSpeed = 0.1	
+	'''
+	# callback functions
+	def BumperEventCallback(self, data):
+		if (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.LEFT):
+			self.stateMachine.setCurrentState('Hit Left')
+		elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.RIGHT):
+			self.stateMachine.setCurrentState('Hit Right')
+		elif (data.state == BumperEvent.PRESSED and data.bumper == BumperEvent.CENTER):
+			self.stateMachine.setCurrentState('Hit Center')
+		else:
+			self.stateMachine.setCurrentState('Go Forward')
 
-    def call_back(self,laserscan):
+	def WheelDropEventCallback(self,data):
+		if (data.state == WheelDropEvent.DROPPED):
+			self.stateMachine.setCurrentState('Wheel Drop')
+		else:
+			self.stateMachine.setCurrentState('Go Forward')
+	'''
+    def laser_call_back(self,laserscan):
 		'''Passes laserscan onto function sort which gives the sect
 		variables the proper values.  Then the movement function is run
 		with the class sect variables as parameters.
 		Parameter laserscan is received from callback function.'''
 		# take in laserscan data, and account for NAN
 		entries = len(laserscan.ranges)
-#		print (entries)
 		# make binary array, one if obstacle 0 if free
 		nanCounter = 0
 		previousVal = laserscan.range_min
@@ -52,8 +75,7 @@ class follow_the_gap:
 							laserArr[entry] = laserscan.range_min
 				else:
 					laserArr[entry] = laserscan.range_min
-			
-#		print(laserArr)
+
 		# making the gap index
 		previousVal = 0
 		gapStart = 0
@@ -84,6 +106,17 @@ class follow_the_gap:
 		#print (entries, largestGapIndexes, leftDiff, rightDiff, middleDiff, gapCenterAngle)
 		print('Gap center angle: ', math.degrees(gapCenterAngle))
 		
+		if math.abs(math.degrees(gapCenterAngle)) < 15:
+			# if less than 15 deg, go forward
+			move = Twist()
+			move.linear.x = self.forwardSpeed
+			self.cmd_vel.Publish(move)
+		else:
+			angSpeed = gapCenterAngle * self.turnSpeed
+			move = Twist()
+			move.angular.z = angSpeed
+			self.cmd_vel.Publish(move)
+
 		binLaserscan.ranges = laserArr
 		self.pub.publish(binLaserscan)
 		#self.r.sleep() 
