@@ -41,6 +41,8 @@ class follow_the_gap:
 		self.currZ = 0
 		
 		self.endX = 0
+		self.endY = 0
+		self.endZ = 0
 
     def odom_callback(self, data):
 	    	if self.startX == None:
@@ -48,12 +50,14 @@ class follow_the_gap:
 	    		self.endX = self.startX - 15
 	    	if self.startY == None:
 	    		self.startY = data.pose.pose.position.y
+	    		self.endY = self.startY
 	    	if self.startZ == None:
 	        	self.startZ = data.pose.pose.orientation.z
+	        	self.endZ = self.startZ
 	    
 	    	self.currX = data.pose.pose.position.x
 	    	self.currY = data.pose.pose.position.y
-		self.currZ = data.pose.pose.orientation.z
+	    	self.currZ = data.pose.pose.orientation.z
 		
     def laser_call_back(self,laserscan):
 		'''Passes laserscan onto function sort which gives the sect
@@ -73,19 +77,8 @@ class follow_the_gap:
 			if (laserscan.ranges[entry] > 1.5) or np.isnan(laserscan.ranges[entry]):
 				#print(entry)
 				laserArr[entry] = laserscan.range_max
-			#elif np.isnan(laserscan.ranges[entry]):
-			#    laserArr[entry] = laserscan.range_max
 			else:
 			    laserArr[entry] = laserscan.range_min															
-				#if (laserArr[entry - 1] == laserscan.range_max):
-				#	if (entry + 1) <= entries:
-				#		if laserscan.ranges[entry+1] > 0.5:
-				#			laserArr[entry] = laserscan.range_max
-				#		else:
-				#			laserArr[entry] = laserscan.range_min
-				
-				#else:
-				#	laserArr[entry] = laserscan.range_min
 
 		# making the gap index
 		previousVal = 0
@@ -140,10 +133,9 @@ class follow_the_gap:
 				# if less than 15 deg, go forward
 				print('moving forward')
 				move = Twist()
-				#if self.currY != self.startY:
-				#    #print(self.currY, self.startY)
-				#    difference = self.startY-self.currY
-				#    move.angular.z = difference / 2
+				angleErr = self.currY - self.endY
+				print(angleErr)
+				move.angular.z = -angleErr
 				move.linear.x = self.forwardSpeed
 				self.cmd_vel.publish(move)
 			else:
@@ -151,7 +143,7 @@ class follow_the_gap:
 		    		print('angular speed', angSpeed)
 		    		move = Twist()
 		    		move.angular.z = angSpeed * 1.2
-		    		move.linear.x = 0.1
+		    		move.linear.x = self.forwardSpeed
 		    		self.cmd_vel.publish(move)
 
 		binLaserscan.ranges = laserArr
